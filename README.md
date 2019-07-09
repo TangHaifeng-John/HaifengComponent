@@ -1,5 +1,10 @@
 # Android组件化开发方案
 
+[Demo Github地址](https://github.com/TangHaifeng-John/HaifengComponent)
+
+Demo基础框架图
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20190709192748364.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RFMjgwOTMxNjM=,size_16,color_FFFFFF,t_70)
+
 ##  背景:  为什么要组件化开发？
 
 #####    1.  随着功能的增加代码越来越臃肿，到底项目调试越来越困难
