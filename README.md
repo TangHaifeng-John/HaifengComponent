@@ -127,7 +127,7 @@ class  MainApplication:Application(){
 ###	 隔离AndroidManifest.xml文件
 按照图片的示例新建一个manifest目录，然后分别创建一个app目录和一个lib目录,然后在这两个目录里面分别存放 作为app运行的清单文件和作为lib运行的清单文件,如下图所示
 
-![image-20190709141155268](/Users/haifeng/Library/Application Support/typora-user-images/image-20190709141155268.png)
+![a](https://github.com/TangHaifeng-John/HaifengComponent/blob/master/resources/a.png)
 
 ```java
   sourceSets {
