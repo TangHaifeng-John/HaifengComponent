@@ -163,7 +163,7 @@ resourcePrefix "login_"
 
 resourcePrefix表示约束，加上这个配置后，login模块的所有资源必须以login_开头
 
-![image-20190709144301065](/Users/haifeng/Library/Application Support/typora-user-images/image-20190709144301065.png)
+![image-20190709144301065](https://github.com/TangHaifeng-John/HaifengComponent/blob/master/resources/b.png)
 
 如图，加上login_后编译成功，不加上则报错
 
