@@ -1,5 +1,4 @@
 # Android组件化开发方案
-
 [Demo Github地址](https://github.com/TangHaifeng-John/HaifengComponent)
 
 Demo基础框架图
@@ -132,8 +131,7 @@ class  MainApplication:Application(){
 ###	 隔离AndroidManifest.xml文件
 按照图片的示例新建一个manifest目录，然后分别创建一个app目录和一个lib目录,然后在这两个目录里面分别存放 作为app运行的清单文件和作为lib运行的清单文件,如下图所示
 
-![a](https://github.com/TangHaifeng-John/HaifengComponent/blob/master/resources/a.png)
-
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20190709192544558.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RFMjgwOTMxNjM=,size_16,color_FFFFFF,t_70)
 ```java
   sourceSets {
         main {
@@ -145,7 +143,7 @@ class  MainApplication:Application(){
         }
     }
 ```
-###解决依赖问题
+###	解决依赖问题
 做完上面这些操作其实每个模块已经可以单独运行起来了，现在还需要解决一个问题，如果打包到主项目中，在gradle3.0的插件已经有实现了 runtimeOnly，在主项目的build.gradle的依赖中添加代码
 ```java
 dependencies {
@@ -154,7 +152,7 @@ dependencies {
 }
 ```
 runtimeOnly的意思是login这个模块在编译期间对app模块不可见，只在运行期间可见
-完成了上面这些步骤
+
 ## 问题2（模块和模块之间代码和资源文件都需要隔离）
 
 这个问题其实在问题1已经有解决，这里主要解决一下资源冲突的问题
@@ -166,9 +164,11 @@ runtimeOnly的意思是login这个模块在编译期间对app模块不可见，�
 resourcePrefix "login_"
 ```
 
-resourcePrefix表示约束，加上这个配置后，login模块的所有资源必须以login_开头
+resourcePrefix表示约束，加上这个配置后，login模块的所有资源必须以login_	开头
 
-![image-20190709144301065](https://github.com/TangHaifeng-John/HaifengComponent/blob/master/resources/b.png)
+这些资源文件包括，颜色，尺寸，layout等
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/2019070919262677.png)
 
 如图，加上login_后编译成功，不加上则报错
 
@@ -193,8 +193,8 @@ resourcePrefix表示约束，加上这个配置后，login模块的所有资源�
 
 广播和EventBus大家应该都比较熟悉，接下来我们重点介绍一下接口方式是怎么通信的
 
-###我们本次的例子是在主模块中调用Login模块的接口，显示一个Toast
-####第一步，在Base模块中创建LoginApi接口
+###	我们本次的例子是在主模块中调用Login模块的接口，显示一个Toast
+####	第一步，在Base模块中创建LoginApi接口
 
 ```kotlin
 interface LoginApi{
@@ -202,7 +202,7 @@ interface LoginApi{
 }
 ```
 
-####第二步，在Base模块创建一个基础服务ApiService
+####	第二步，在Base模块创建一个基础服务ApiService
 
 ```kotlin
 class ApiService private  constructor(){
@@ -224,7 +224,7 @@ class ApiService private  constructor(){
 ```
 ApiService 是一个单例，提供模块间基础服务的通信，所有的模块服务都需要在ApiService注册
 
-####第三步，在Login模块中实现LoginApi
+####	第三步，在Login模块中实现LoginApi
 ```kotlin
 class LoginApiImpl :LoginApi {
     override fun showToast(toast: String) {
@@ -235,7 +235,7 @@ class LoginApiImpl :LoginApi {
 }
 ```
 
-####第四步，注册Login模块服务
+####	第四步，注册Login模块服务
 ```kotlin
     override fun onCreateModuleApp(application: Application) {
         app=application
@@ -243,3 +243,61 @@ class LoginApiImpl :LoginApi {
         ApiService.singleInstance.loginApi = LoginApiImpl()
     }
 ```
+
+
+###	版本依赖统一管理
+组件化开发还有一个很关键的一个，保证依赖库的统一性，所以我们需要在根目录的build.gradle文件里面定义变量来控制依赖库
+```
+ ext.versions = [
+            'minSdkVersion'   : 15,
+            'targetSdkVersion': 28,
+            'versionCode'     : 1,
+            'arouter_version' : '1.5.0',
+            'constraint_layout_version':'1.1.3',
+            'androidPlugin':'3.4.1'
+    ]
+
+
+    ext.deps = [
+            //plugins
+            android  : [
+                    'gradlePlugin': "com.android.tools.build:gradle:${versions.androidPlugin}",
+            ],
+
+            //google support
+            'support': [
+                    'compat'     : "com.android.support:support-compat:${versions.supportLibrary}",
+                    'design'     : "com.android.support:design:${versions.supportLibrary}",
+                    'v7'         : [
+                            'appcompat'   : "com.android.support:appcompat-v7:${versions.supportLibrary}",
+                            'recyclerView': "com.android.support:recyclerview-v7:${versions.supportLibrary}",
+                            'cardView'    : "com.android.support:cardview-v7:${versions.supportLibrary}",
+
+                    ],
+                    'v4'         : [
+                            'support_v4': "com.android.support:support-v4:${versions.supportLibrary}"
+                    ],
+                    'annotations': "com.android.support:support-annotations:${versions.supportLibrary}",
+
+                    'multidex'   : "com.android.support:multidex:1.0.1",
+                    'constraint' :"com.android.support.constraint:constraint-layout:1.1.3",
+                    'test'       : [
+                            'runner': 'com.android.support.test:runner:1.0.1',
+                            'rule'  : 'com.android.support.test:rules:1.0.1'
+                    ],
+            ],
+
+
+
+
+
+
+    ]
+```
+
+
+在依赖中添加
+```
+ implementation deps.support.compat.constraint
+ ```
+
